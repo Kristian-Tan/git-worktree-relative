@@ -13,35 +13,35 @@ while getopts "hw:r:v" opt; do
     h)
       cat << EOF
 usage: [-w worktree_target] [-r repository_target] [-v]
-  -w worktree_target = directory of worktree to be made absolute (will default to current directory if not supplied)"
-  -r repository_target = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)"
-  -v = verbose"
-example:"
-  1) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is connected with repository (link is not broken)"
-    cd /home/myuser/www/myproject"
+  -w worktree_target = directory of worktree to be made absolute (will default to current directory if not supplied)
+  -r repository_target = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)
+  -v = verbose
+example:
+  1) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is connected with repository (link is not broken)
+    cd /home/myuser/www/myproject
     git-worktree-absolute
-    OR"
-    git-worktree-absolute -w /home/myuser/www/myproject"
-  2) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is NOT connected with repository (link broken)"
-    cd /home/myuser/www/myproject"
-    git-worktree-absolute -r /home/myuser/repo/myproject/.git/worktrees/myproject"
-    OR"
-    git-worktree-absolute -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject"
-  to detect if link is broken, run command 'git status' in worktree directory"
+    OR
+    git-worktree-absolute -w /home/myuser/www/myproject
+  2) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is NOT connected with repository (link broken)
+    cd /home/myuser/www/myproject
+    git-worktree-absolute -r /home/myuser/repo/myproject/.git/worktrees/myproject
+    OR
+    git-worktree-absolute -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject
+  to detect if link is broken, run command 'git status' in worktree directory
 
-IMPORTANT: if -r option is used, make sure to include worktree directory inside .git directory"
-  CORRECT EXAMPLE: -r /home/myuser/repo/myproject/.git/worktrees/myprojectworktree"
-  WRONG EXAMPLE: -r /home/myuser/repo/myproject"
-  WHY IS IT IMPORTANT: a git worktree may have different name in .git directory, for example consider this setup"
-    main repository: /home/myuser/repo/myproject (contains .git directory)"
-    worktree 1 (for development, checked out for branch 'development'): /home/myuser/www/myproject (contains .git file)"
-    worktree 2 (for production, checked out for branch 'production'): /var/www/html/myproject (contains .git file)"
-  RESULT:"
-    file /home/myuser/www/myproject/.git  contains 'gitdir: /home/myuser/repo/myproject' (development branch) "
-    file /var/www/html/myproject/.git     contains 'gitdir: /home/myuser/repo/myproject' (production branch) "
-    directory /home/myuser/repo/myproject/.git/worktrees contains 2 directory called 'myproject' and 'myproject1' "
-    file /home/myuser/repo/myproject/.git/worktrees/myproject/gitdir   contains '/home/myuser/www/myproject/.git' "
-    file /home/myuser/repo/myproject/.git/worktrees/myproject1/gitdir  contains '/var/www/html/myproject/.git' "
+IMPORTANT: if -r option is used, make sure to include worktree directory inside .git directory
+  CORRECT EXAMPLE: -r /home/myuser/repo/myproject/.git/worktrees/myprojectworktree
+  WRONG EXAMPLE: -r /home/myuser/repo/myproject
+  WHY IS IT IMPORTANT: a git worktree may have different name in .git directory, for example consider this setup
+    main repository: /home/myuser/repo/myproject (contains .git directory)
+    worktree 1 (for development, checked out for branch 'development'): /home/myuser/www/myproject (contains .git file)
+    worktree 2 (for production, checked out for branch 'production'): /var/www/html/myproject (contains .git file)
+  RESULT:
+    file /home/myuser/www/myproject/.git  contains 'gitdir: /home/myuser/repo/myproject' (development branch) 
+    file /var/www/html/myproject/.git     contains 'gitdir: /home/myuser/repo/myproject' (production branch) 
+    directory /home/myuser/repo/myproject/.git/worktrees contains 2 directory called 'myproject' and 'myproject1' 
+    file /home/myuser/repo/myproject/.git/worktrees/myproject/gitdir   contains '/home/myuser/www/myproject/.git' 
+    file /home/myuser/repo/myproject/.git/worktrees/myproject1/gitdir  contains '/var/www/html/myproject/.git' 
 EOF
         exit 0
         ;;

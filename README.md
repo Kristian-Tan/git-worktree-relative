@@ -10,13 +10,13 @@
 
 ## My solution
 
-- Bash script to replace (with sed) the content of `{worktree}/.git file` and `{repo}/.git/worktrees/{wtname}/gitdir`
+- Bash script to replace the content of `{worktree}/.git file` and `{repo}/.git/worktrees/{wtname}/gitdir`
 - Why bash: almost everyone who use git will use it in some kind of bash-shell-like environment (ex: bash shell in linux, git bash in windows)
 - Requirements (should be available on every bash shell):
   - `cat`
   - `echo`
   - `readlink`
-  - `realpath` (GNU utility)
+  - `realpath` (GNU utility since 2012, might not be preinstalled in very old linux system like debian wheezy)
   - `sed`
   - `pwd`
   - bash shell parameter expansion `${parameter/pattern/string}` and `${parameter%%word}` https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
@@ -33,7 +33,24 @@
   - `-h` = show help
 - This solution works for broken link (ex: worktree directory moved OR parent git directory moved): just supply the repository path in `-r repositor_target` flag
 - This solution works for worktree inside parent repository
-
+- example:
+  - repository in `/home/myuser/repo/myproject` ; worktree in `/home/myuser/www/myproject` ; worktree is connected with repository (link is not broken)
+    ```bash
+    cd /home/myuser/www/myproject
+    git-worktree-relative
+    # OR
+    git-worktree-relative -w /home/myuser/www/myproject
+    ```
+  - repository in `/home/myuser/repo/myproject` ; worktree in `/home/myuser/www/myproject` ; worktree is NOT connected with repository (link broken)
+    ```bash
+    cd /home/myuser/www/myproject
+    git-worktree-relative -r /home/myuser/repo/myproject/.git/worktrees/myproject
+    # OR
+    git-worktree-relative -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject
+    ```
+  - to detect if link is broken, run command 'git status' in worktree directory
+- Reversing relative worktree back to absolute: just change `git-worktree-relative` command with `git-worktree-absolute` (same command line argument)
+  - command `git worktree remove` requires the path to be absolute: you can use this reverse script to revert it back to absolute path before removing
 
 ## Installation
 
