@@ -27,7 +27,7 @@
 - Execute the script in your worktree (or supply the worktree directory path in -w options)
 - It will read path to repository from `{worktree}/.git` file
 - Options:
-  - `-v` = verbose
+  - `-v` = verbose (not implemented yet)
   - `-w worktree_target` = directory of worktree to be made relative (will default to current directory if not supplied)
   - `-r repository_target` = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)
   - `-h` = show help
@@ -70,9 +70,7 @@
 ## TODO
 
 - verbose output
-- detect if the sed replace is a success or not (see exit code or just grep the file before and after replacement)
 - automatic installation script
-- revert back relative path to absolute path
 - automated test with github runner
 
 ## Contributing
