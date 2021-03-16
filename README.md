@@ -12,7 +12,7 @@
 
 - Bash script to replace (with sed) the content of `{worktree}/.git file` and `{repo}/.git/worktrees/{wtname}/gitdir`
 - Why bash: almost everyone who use git will use it in some kind of bash-shell-like environment (ex: bash shell in linux, git bash in windows)
-- Requirements: 
+- Requirements (should be available on every bash shell):
   - `cat`
   - `echo`
   - `readlink`
@@ -28,8 +28,11 @@
 - It will read path to repository from `{worktree}/.git` file
 - Options:
   - `-v` = verbose
-  - `-w worktree_target` = worktree directory to be made relative, if not set, it will default to current directory
+  - `-w worktree_target` = directory of worktree to be made relative (will default to current directory if not supplied)
+  - `-r repository_target` = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)
   - `-h` = show help
+- This solution works for broken link (ex: worktree directory moved OR parent git directory moved): just supply the repository path in `-r repositor_target` flag
+- This solution works for worktree inside parent repository
 
 
 ## Installation
