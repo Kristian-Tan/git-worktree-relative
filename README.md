@@ -19,7 +19,7 @@
   - `realpath` (GNU utility)
   - `sed`
   - `pwd`
-  - bash shell parameter expansion `"${variablename/replacefrom/replaceto}"` https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
+  - bash shell parameter expansion `${parameter/pattern/string}` and `${parameter%%word}` https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
 
 
 ## Usage
@@ -56,7 +56,7 @@
 - detect if the sed replace is a success or not (see exit code or just grep the file before and after replacement)
 - automatic installation script
 - revert back relative path to absolute path
-
+- automated test with github runner
 
 ## Contributing
 

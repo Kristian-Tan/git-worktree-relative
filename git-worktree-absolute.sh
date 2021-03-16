@@ -13,20 +13,20 @@ while getopts "hw:r:v" opt; do
     h)
       cat << EOF
 usage: [-w worktree_target] [-r repository_target] [-v]
-  -w worktree_target = directory of worktree to be made relative (will default to current directory if not supplied)"
+  -w worktree_target = directory of worktree to be made absolute (will default to current directory if not supplied)"
   -r repository_target = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)"
   -v = verbose"
 example:"
   1) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is connected with repository (link is not broken)"
     cd /home/myuser/www/myproject"
-    git-worktree-relative"
+    git-worktree-absolute
     OR"
-    git-worktree-relative -w /home/myuser/www/myproject"
+    git-worktree-absolute -w /home/myuser/www/myproject"
   2) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is NOT connected with repository (link broken)"
     cd /home/myuser/www/myproject"
-    git-worktree-relative -r /home/myuser/repo/myproject/.git/worktrees/myproject"
+    git-worktree-absolute -r /home/myuser/repo/myproject/.git/worktrees/myproject"
     OR"
-    git-worktree-relative -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject"
+    git-worktree-absolute -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject"
   to detect if link is broken, run command 'git status' in worktree directory"
 
 IMPORTANT: if -r option is used, make sure to include worktree directory inside .git directory"
@@ -84,14 +84,8 @@ worktree_name_inside_repository=`echo "$worktree_name_inside_repository_reversed
 absolute_repository=`readlink -f $repository_target` # get absolute path of repository
 absolute_worktree=`readlink -f $worktree_target` # get absolute path of worktree
 
-path_worktree_to_repo=`realpath --relative-to="$absolute_worktree" "$absolute_repository"` # get relative path from worktree to repo
-path_repo_to_worktree=`realpath --relative-to="$absolute_repository" "$absolute_worktree"` # get relative path from repo to worktree
-
-#sed -i "s+$absolute_repository+$path_worktree_to_repo+g" "$absolute_worktree/.git" # replace with sed: before=absolute path to repository, after=relative path to repository, location={worktree}/.git file
-#sed -i "s+$absolute_worktree+$path_repo_to_worktree+g" "$worktree_link_content/gitdir" # replace with sed: before=absolute path to worktree, after=relative path to worktree, location={repo}/.git/worktrees/{wtname}/gitdir file
-
 # use echo instead of sed to write directly into file content
-echo "gitdir: $path_worktree_to_repo/.git/$worktree_name_inside_repository" > "$absolute_worktree/.git"
-echo "$path_repo_to_worktree/.git" > "$worktree_link_content/gitdir"
+echo "gitdir: $absolute_repository/.git/$worktree_name_inside_repository" > "$absolute_worktree/.git"
+echo "$absolute_worktree/.git" > "$worktree_link_content/gitdir"
 
 
