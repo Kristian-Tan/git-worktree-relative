@@ -55,6 +55,7 @@
 - verbose output
 - detect if the sed replace is a success or not (see exit code or just grep the file before and after replacement)
 - automatic installation script
+- revert back relative path to absolute path
 
 
 ## Contributing
@@ -64,6 +65,6 @@
 
 ## Credits
 
-- Bash implementation of strpos and substr by BR0kEN- (https://gist.github.com/BR0kEN-/a84b18717f8c67ece6f7)
-
+- [REMOVED] Bash implementation of strpos and substr by BR0kEN- (https://gist.github.com/BR0kEN-/a84b18717f8c67ece6f7)
+- StackOverflow user `usretc` for advise in https://stackoverflow.com/q/66635437/3706717 
 
