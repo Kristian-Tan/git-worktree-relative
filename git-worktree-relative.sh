@@ -83,7 +83,10 @@ if test "$repository_target" = ""; then
     verbose_output
     verbose_output 'read content of file in "$worktree_target/.git", it should contain "gitdir: /home/kristian/repos/myrepo/.git/worktrees/myrepo_worktree1"'
     verbose_output "  \$ repository_target=\"\$(cat $worktree_target/.git)\""
-    repository_target="$(cat $worktree_target/.git)"
+    if ! repository_target=$(cat "$worktree_target"/.git); then
+        echo 1>&2 "Could not read $worktree_target/.git, is this a worktree?"
+        exit 1
+    fi
 
     verbose_output
     verbose_output 'replace "gitdir: " with ""'
