@@ -27,7 +27,8 @@
 - Execute the script in your worktree (or supply the worktree directory path in -w options)
 - It will read path to repository from `{worktree}/.git` file
 - Options:
-  - `-v` = verbose (not implemented yet)
+  - `-v` = verbose
+  - `-d` = dry run (do not write any change, use with verbose to show what this script do)
   - `-w worktree_target` = directory of worktree to be made relative (will default to current directory if not supplied)
   - `-r repository_target` = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)
   - `-h` = show help
@@ -69,7 +70,6 @@
 
 ## TODO
 
-- verbose output
 - automatic installation script
 - automated test with github runner
 

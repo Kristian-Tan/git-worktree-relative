@@ -6,9 +6,10 @@ OPTIND=1 # Reset in case getopts has been used previously in the shell.
 worktree_target=""
 repository_target=""
 verbose=0
+dry_run=0
 
 # read arguments from getopts
-while getopts "hw:r:v" opt; do
+while getopts "hw:r:vd" opt; do
     case "$opt" in
     h)
       cat << EOF
@@ -16,6 +17,7 @@ usage: [-w worktree_target] [-r repository_target] [-v]
   -w worktree_target = directory of worktree to be made absolute (will default to current directory if not supplied)
   -r repository_target = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)
   -v = verbose
+  -d = dry_run (do not write any change, use with verbose to show what this script do)
 example:
   1) repository in /home/myuser/repo/myproject ; worktree in /home/myuser/www/myproject ; worktree is connected with repository (link is not broken)
     cd /home/myuser/www/myproject
@@ -49,43 +51,111 @@ EOF
         ;;
     r)  repository_target=$OPTARG
         ;;
+    d)  dry_run=1
+        ;;
     v)  verbose=1
         ;;
     esac
 done
 
 
-# fill argument with default value if empty
+
+# declare verbose output function
+
+# @param string $1
+#   Input string that should be printed if verbose is on
+verbose_output()
+{
+    if test $verbose -eq 1; then
+        echo "$1"
+    fi
+}
+
+
 if test "$worktree_target" = ""; then
+    verbose_output
+    verbose_output "fill argument with default value if empty"
     worktree_target=`pwd`
 fi
 
 
-
-
 if test "$repository_target" = ""; then
-    repository_target="$(cat $worktree_target/.git)" # read content of file in "$worktree_target/.git", it should contain "gitdir: /home/kristian/repos/myrepo/.git/worktrees/myrepo_worktree1"
-    repository_target="${repository_target/gitdir: /}" # replace "gitdir: " with ""
-    repository_target=`readlink -f $repository_target` # get absolute path of repository (with .git/{wtname})
+    verbose_output
+    verbose_output 'read content of file in "$worktree_target/.git", it should contain "gitdir: /home/kristian/repos/myrepo/.git/worktrees/myrepo_worktree1"'
+    verbose_output "  \$ repository_target=\"\$(cat $worktree_target/.git)\""
+    repository_target="$(cat $worktree_target/.git)"
+
+    verbose_output
+    verbose_output 'replace "gitdir: " with ""'
+    verbose_output "  \$ repository_target=\"\${repository_target/gitdir: /}\""
+    repository_target="${repository_target/gitdir: /}"
+
+    verbose_output
+    verbose_output 'get absolute path of repository (with .git/{wtname})'
+    verbose_output "  \$ repository_target=\`readlink -f $repository_target\`"
+    repository_target=`readlink -f $repository_target`
 fi
 
-worktree_link_content=$repository_target # worktree_link_content should contain "/home/kristian/repos/myrepo/.git/worktrees/myrepo_worktree1"
+verbose_output
+verbose_output 'worktree_link_content should contain "/home/kristian/repos/myrepo/.git/worktrees/myrepo_worktree1"'
+verbose_output "  \$ worktree_link_content=\$repository_target"
+worktree_link_content=$repository_target
+
 string_slash_dot_git_slash="/.git/"
-repository_target="${worktree_link_content%%$string_slash_dot_git_slash*}" # remove all string after "/.git/", should contain "/home/kristian/repos/myrepo"
 
-# worktree_link_content_reversed=$(echo $worktree_link_content | rev) # reverse string for worktree_link_content
-worktree_link_content_reversed=`echo "$worktree_link_content" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'` # use sed instead of rev since not all machine have linux-util rev
-# string_slash_dot_git_slash_reversed=$(echo $string_slash_dot_git_slash | rev) # reverse string for string_slash_dot_git_slash
-string_slash_dot_git_slash_reversed=`echo "$string_slash_dot_git_slash" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'` # use sed instead of rev since not all machine have linux-util rev
-worktree_name_inside_repository_reversed="${worktree_link_content_reversed%%$string_slash_dot_git_slash_reversed*}" # remove all string after (reversed)
-# worktree_name_inside_repository=$(echo $worktree_name_inside_repository_reversed | rev) # should contain "worktrees/myrepo_worktree1"
-worktree_name_inside_repository=`echo "$worktree_name_inside_repository_reversed" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'` # use sed instead of rev since not all machine have linux-util rev
+verbose_output
+verbose_output 'remove all string after "/.git/", should contain "/home/kristian/repos/myrepo"'
+verbose_output "  \$ repository_target=\"\${worktree_link_content%%$string_slash_dot_git_slash*}\""
+repository_target="${worktree_link_content%%$string_slash_dot_git_slash*}"
 
-absolute_repository=`readlink -f $repository_target` # get absolute path of repository
-absolute_worktree=`readlink -f $worktree_target` # get absolute path of worktree
+verbose_output
+verbose_output 'reverse string for worktree_link_content'
+verbose_output "  \$ worktree_link_content_reversed=\`echo \"$worktree_link_content\" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'\`"
+worktree_link_content_reversed=`echo "$worktree_link_content" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'`
+
+verbose_output
+verbose_output 'reverse string for string_slash_dot_git_slash'
+verbose_output "  \$ string_slash_dot_git_slash_reversed=\`echo \"$string_slash_dot_git_slash\" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'\`"
+string_slash_dot_git_slash_reversed=`echo "$string_slash_dot_git_slash" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'`
+
+verbose_output
+verbose_output 'remove all string after (reversed)'
+verbose_output "  \$ worktree_name_inside_repository_reversed=\"\${worktree_link_content_reversed%%$string_slash_dot_git_slash_reversed*}\""
+worktree_name_inside_repository_reversed="${worktree_link_content_reversed%%$string_slash_dot_git_slash_reversed*}"
+
+verbose_output
+verbose_output 'reverse back: should contain "worktrees/myrepo_worktree1"'
+verbose_output "  \$ worktree_name_inside_repository=\`echo \"$worktree_name_inside_repository_reversed\" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'\`"
+worktree_name_inside_repository=`echo "$worktree_name_inside_repository_reversed" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'`
+
+verbose_output
+verbose_output 'get absolute path of repository'
+verbose_output "  \$ absolute_repository=\`readlink -f $repository_target\`"
+absolute_repository=`readlink -f $repository_target`
+
+verbose_output
+verbose_output 'get absolute path of worktree'
+verbose_output "  \$ absolute_worktree=\`readlink -f $worktree_target\`"
+absolute_worktree=`readlink -f $worktree_target`
 
 # use echo instead of sed to write directly into file content
-echo "gitdir: $absolute_repository/.git/$worktree_name_inside_repository" > "$absolute_worktree/.git"
-echo "$absolute_worktree/.git" > "$worktree_link_content/gitdir"
+
+verbose_output
+verbose_output 'overwrite {worktree_target}/.git file'
+verbose_output "  \$ echo \"gitdir: $absolute_repository/.git/$worktree_name_inside_repository\" > \"$absolute_worktree/.git\""
+if test $dry_run -eq 0; then
+    echo "gitdir: $absolute_repository/.git/$worktree_name_inside_repository" > "$absolute_worktree/.git"
+else
+    verbose_output "dry run: not running operation"
+fi
+
+verbose_output
+verbose_output 'overwrite {repo}/.git/worktrees/{wtname}/gitdir file'
+verbose_output "  \$ echo \"$absolute_worktree/.git\" > \"$worktree_link_content/gitdir\""
+if test $dry_run -eq 0; then
+    echo "$absolute_worktree/.git" > "$worktree_link_content/gitdir"
+else
+    verbose_output "dry run: not running operation"
+fi
 
 
