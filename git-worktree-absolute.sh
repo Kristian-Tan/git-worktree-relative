@@ -82,7 +82,7 @@ fi
 if test "$repository_target" = ""; then
     verbose_output
     verbose_output 'read content of file in "$worktree_target/.git", it should contain "gitdir: /home/kristian/repos/myrepo/.git/worktrees/myrepo_worktree1"'
-    verbose_output "  \$ repository_target=\"\$(cat $worktree_target/.git)\""
+    verbose_output "  \$ repository_target=\"\$(cat "$worktree_target"/.git)\""
     if ! repository_target=$(cat "$worktree_target"/.git); then
         echo 1>&2 "Could not read $worktree_target/.git, is this a worktree?"
         exit 1
@@ -95,8 +95,8 @@ if test "$repository_target" = ""; then
 
     verbose_output
     verbose_output 'get absolute path of repository (with .git/{wtname})'
-    verbose_output "  \$ repository_target=\`readlink -f $repository_target\`"
-    repository_target=`readlink -f $repository_target`
+    verbose_output "  \$ repository_target=\`readlink -f "$repository_target"\`"
+    repository_target=`readlink -f "$repository_target"`
 fi
 
 verbose_output
@@ -133,13 +133,13 @@ worktree_name_inside_repository=`echo "$worktree_name_inside_repository_reversed
 
 verbose_output
 verbose_output 'get absolute path of repository'
-verbose_output "  \$ absolute_repository=\`readlink -f $repository_target\`"
-absolute_repository=`readlink -f $repository_target`
+verbose_output "  \$ absolute_repository=\`readlink -f "$repository_target"\`"
+absolute_repository=`readlink -f "$repository_target"`
 
 verbose_output
 verbose_output 'get absolute path of worktree'
-verbose_output "  \$ absolute_worktree=\`readlink -f $worktree_target\`"
-absolute_worktree=`readlink -f $worktree_target`
+verbose_output "  \$ absolute_worktree=\`readlink -f "$worktree_target"\`"
+absolute_worktree=`readlink -f "$worktree_target"`
 
 # use echo instead of sed to write directly into file content
 
