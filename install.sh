@@ -29,8 +29,8 @@ ln "$install_directory_target/git-worktree-relative.sh" "$install_directory_targ
 cp "git-worktree-absolute.sh" "$install_directory_target/git-worktree-absolute.sh" || exit_on_error "cannot copy git-worktree-absolute.sh, is it already installed?"
 ln "$install_directory_target/git-worktree-absolute.sh" "$install_directory_target/git-worktree-absolute" || exit_on_error "cannot copy git-worktree-absolute.sh, is it already installed?"
 
-chmod u+x "$install_directory_target/git-worktree-relative.sh"
-chmod u+x "$install_directory_target/git-worktree-relative"
-chmod u+x "$install_directory_target/git-worktree-absolute.sh"
-chmod u+x "$install_directory_target/git-worktree-absolute"
+chmod u+x,g+x,o+x "$install_directory_target/git-worktree-relative.sh"
+chmod u+x,g+x,o+x "$install_directory_target/git-worktree-relative"
+chmod u+x,g+x,o+x "$install_directory_target/git-worktree-absolute.sh"
+chmod u+x,g+x,o+x "$install_directory_target/git-worktree-absolute"
 
