@@ -61,9 +61,9 @@
 ```bash
 git clone https://github.com/Kristian-Tan/git-worktree-relative.git
 cd git-worktree-relative
-sudo sh install.sh
+sudo bash install.sh
 ```
-- or this one-line: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; cd git-worktree-relative ; sudo sh install.sh```
+- or this one-line: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; cd git-worktree-relative ; sudo bash install.sh```
 
 #### Manual Installation
 
