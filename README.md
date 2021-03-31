@@ -5,7 +5,7 @@
 
 - Feature request from 2016 but not implemented yet (as in 2021-03-01) https://public-inbox.org/git/CACsJy8AZVWNQNgsw21EF2UOk42oFeyHSRntw_rpeZz_OT1xdMw@mail.gmail.com/T/
 - There are other solution which use go, but not everyone want to install go and compile their own tools (or maybe just cannot be bothered to) https://github.com/harobed/fix-git-worktree
-- Even if this feature is not really popular https://stackoverflow.com/questions/66635437/git-worktree-with-relative-path only have 30-50 views (as in 2021-03-01)
+- Even if this feature is not really popular https://stackoverflow.com/questions/66635437/git-worktree-with-relative-path only have 50-70 views (as in 2021-03-31)
 
 
 ## My solution
@@ -55,8 +55,20 @@
 
 ## Installation
 
+#### Automatic Installation
+
+- copy paste below command into your terminal:
+```bash
+git clone https://github.com/Kristian-Tan/git-worktree-relative.git
+cd git-worktree-relative
+sudo sh install.sh
+```
+- or this one-line: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; cd git-worktree-relative ; sudo sh install.sh```
+
+#### Manual Installation
+
 - installation for all users:
-  - copy `git-worktree-relative.sh` to `/usr/bin` (you can also remove the extension)
+  - copy `git-worktree-relative.sh` to `/usr/bin` or `/bin` (you can also remove the extension)
   - give other user permission to execute it
   - example:
   ```bash
@@ -67,11 +79,6 @@
 - installation for one user:
   - copy it to any directory that is added to your PATH variable
 
-
-## TODO
-
-- automatic installation script
-- automated test with github runner
 
 ## Contributing
 
