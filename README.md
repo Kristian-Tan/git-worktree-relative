@@ -20,6 +20,7 @@
   - `sed`
   - `pwd`
   - bash shell parameter expansion `${parameter/pattern/string}` and `${parameter%%word}` https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
+- Another bash script to change it back to absolute path (since `git worktree remove` may refuse on relative path)
 
 
 ## Usage
@@ -68,13 +69,16 @@ sudo bash install.sh
 #### Manual Installation
 
 - installation for all users:
-  - copy `git-worktree-relative.sh` to `/usr/bin` or `/bin` (you can also remove the extension)
+  - copy `git-worktree-relative.sh` and `git-worktree-absolute.sh` to `/usr/bin` or `/bin` (you can also remove the extension)
   - give other user permission to execute it
   - example:
   ```bash
     cp git-worktree-relative.sh /usr/bin/git-worktree-relative
+    cp git-worktree-absolute.sh /usr/bin/git-worktree-absolute
     chown root:root /usr/bin/git-worktree-relative
+    chown root:root /usr/bin/git-worktree-absolute
     chmod 0755 /usr/bin/git-worktree-relative
+    chmod 0755 /usr/bin/git-worktree-absolute
   ```
 - installation for one user:
   - copy it to any directory that is added to your PATH variable
