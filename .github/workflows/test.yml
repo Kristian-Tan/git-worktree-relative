@@ -1,0 +1,254 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+    branches: [ master, development, dev* ]
+  pull_request:
+    branches: [ master, development, dev* ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run a multi-line script
+        run: |
+          echo "installing to /bin (default location if not set)"
+          echo "after installation, scripts will be called directly (not with ./filename but filename)"
+          sudo sh install.sh
+
+          echo "setup case 1: from absolute to relative (then back to absolute), no argument, run from good repo, good worktree"
+          mkdir /tmp/mytest
+          mkdir /tmp/mytest/repo1
+          cd /tmp/mytest/repo1
+          git init
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          echo "file1" > file1
+          git add .
+          git commit -am 'initial commit'
+          git status
+          git branch branch1
+          git worktree add ../repo1_branch1 branch1
+          echo "`cat /tmp/mytest/repo1_branch1/.git`"
+          if test "`cat /tmp/mytest/repo1_branch1/.git`" != "gitdir: /tmp/mytest/repo1/.git/worktrees/repo1_branch1"; then
+            echo "failed asserting git file"
+            exit 201
+          fi
+          echo "`cat /tmp/mytest/repo1/.git/worktrees/repo1_branch1/gitdir`"
+          if test "`cat /tmp/mytest/repo1/.git/worktrees/repo1_branch1/gitdir`" != "/tmp/mytest/repo1_branch1/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 202
+          fi
+
+          echo "test case 1-relative"
+          cd /tmp/mytest/repo1_branch1
+          git-worktree-relative
+          echo "`cat /tmp/mytest/repo1_branch1/.git`"
+          if test "`cat /tmp/mytest/repo1_branch1/.git`" != "gitdir: ../repo1/.git/worktrees/repo1_branch1"; then
+            echo "failed asserting git file"
+            exit 203
+          fi
+          echo "`cat /tmp/mytest/repo1/.git/worktrees/repo1_branch1/gitdir`"
+          if test "`cat /tmp/mytest/repo1/.git/worktrees/repo1_branch1/gitdir`" != "../repo1_branch1/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 204
+          fi
+          cd /tmp/mytest/repo1
+          git status
+          git worktree list
+          cd /tmp/mytest/repo1_branch1
+          git status
+          git worktree list
+
+          echo "test case 1-absolute"
+          cd /tmp/mytest/repo1_branch1
+          git-worktree-absolute
+          echo "`cat /tmp/mytest/repo1_branch1/.git`"
+          if test "`cat /tmp/mytest/repo1_branch1/.git`" != "gitdir: /tmp/mytest/repo1/.git/worktrees/repo1_branch1"; then
+            echo "failed asserting git file"
+            exit 205
+          fi
+          echo "`cat /tmp/mytest/repo1/.git/worktrees/repo1_branch1/gitdir`"
+          if test "`cat /tmp/mytest/repo1/.git/worktrees/repo1_branch1/gitdir`" != "/tmp/mytest/repo1_branch1/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 206
+          fi
+          cd /tmp/mytest/repo1
+          git status
+          git worktree list
+          cd /tmp/mytest/repo1_branch1
+          git status
+          git worktree list
+
+          echo "test case 2: called from non-worktree"
+          mkdir /tmp/mytest/not-a-repository
+          cd /tmp/mytest/not-a-repository
+          error_code="empty"
+          git-worktree-relative || error_code=$?
+          if test "$error_code" == "empty"; then
+            echo "error: not returning non-zero error code when ran from non-worktree"
+            exit 207
+          fi
+          error_code="empty"
+          git-worktree-absolute || error_code=$?
+          if test "$error_code" == "empty"; then
+            echo "error: not returning non-zero error code when ran from non-worktree"
+            exit 208
+          fi
+
+          echo "setup case 3: called from worktree that have broken link"
+          mkdir /tmp/mytest/repo3
+          cd /tmp/mytest/repo3
+          git init
+          echo "file1" > file1
+          git add .
+          git commit -am 'initial commit'
+          git status
+          git branch branch2
+          git branch branch3
+          git branch branch4
+          git worktree add ../repo3_branch2 branch2 # worktree point to non-existent repository
+          git worktree add ../repo3_branch3 branch3 # repository point to non-existent worktree
+          git worktree add ../repo3_branch4 branch4 # worktree point to non-existent repository AND repository point to non-existent worktree
+          echo "gitdir: /tmp/some/rubbish/path" > "../repo3_branch2/.git"
+          echo "/tmp/some/rubbish/path" > ".git/worktrees/repo3_branch3/gitdir"
+          echo "gitdir: /tmp/some/rubbish/path" > "../repo3_branch4/.git"
+          echo "/tmp/some/rubbish/path" > ".git/worktrees/repo3_branch4/gitdir"
+
+          echo "test case 3.2.error: called from broken worktree - worktree point to non-existent repository"
+          cd /tmp/mytest/repo3_branch2
+          error_code="empty"
+          git-worktree-relative || error_code=$?
+          if test "$error_code" == "empty"; then
+            echo "error: not returning non-zero error code when ran from non-worktree"
+            exit 209
+          fi
+          error_code="empty"
+          git-worktree-absolute || error_code=$?
+          if test "$error_code" == "empty"; then
+            echo "error: not returning non-zero error code when ran from non-worktree"
+            exit 210
+          fi
+
+          echo "test case 3.2.work: called from broken worktree - worktree point to non-existent repository, should work because -r flag set"
+          cd /tmp/mytest/repo3_branch2
+          git-worktree-relative -r ../repo3/.git/worktrees/repo3_branch2
+          echo "`cat /tmp/mytest/repo3_branch2/.git`"
+          if test "`cat /tmp/mytest/repo3_branch2/.git`" != "gitdir: ../repo3/.git/worktrees/repo3_branch2"; then
+            echo "failed asserting git file"
+            exit 211
+          fi
+          echo "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch2/gitdir`"
+          if test "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch2/gitdir`" != "../repo3_branch2/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 212
+          fi
+          git status
+          git worktree list
+          git-worktree-absolute -r ../repo3/.git/worktrees/repo3_branch2
+          echo "`cat /tmp/mytest/repo3_branch2/.git`"
+          if test "`cat /tmp/mytest/repo3_branch2/.git`" != "gitdir: /tmp/mytest/repo3/.git/worktrees/repo3_branch2"; then
+            echo "failed asserting git file"
+            exit 213
+          fi
+          echo "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch2/gitdir`"
+          if test "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch2/gitdir`" != "/tmp/mytest/repo3_branch2/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 214
+          fi
+          git status
+          git worktree list
+
+          #echo "test case 3.3.error: called from broken worktree - worktree point to non-existent repository, this one should work instead of failing because repo3_branch3 have worktree that points to valid repository"
+          #cd /tmp/mytest/repo3_branch3
+          #error_code="empty"
+          #git-worktree-relative || error_code=$?
+          #if test "$error_code" == "empty"; then
+          #  echo "error: not returning non-zero error code when ran from non-worktree"
+          #  exit 215
+          #fi
+          #error_code="empty"
+          #git-worktree-absolute || error_code=$?
+          #if test "$error_code" == "empty"; then
+          #  echo "error: not returning non-zero error code when ran from non-worktree"
+          #  exit 216
+          #fi
+
+          echo "test case 3.3.work: called from broken worktree - worktree point to non-existent repository, should work because -r flag set"
+          cd /tmp/mytest/repo3_branch3
+          git-worktree-relative -r ../repo3/.git/worktrees/repo3_branch3
+          echo "`cat /tmp/mytest/repo3_branch3/.git`"
+          if test "`cat /tmp/mytest/repo3_branch3/.git`" != "gitdir: ../repo3/.git/worktrees/repo3_branch3"; then
+            echo "failed asserting git file"
+            exit 217
+          fi
+          echo "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch3/gitdir`"
+          if test "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch3/gitdir`" != "../repo3_branch3/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 218
+          fi
+          git status
+          git worktree list
+          git-worktree-absolute -r ../repo3/.git/worktrees/repo3_branch3
+          echo "`cat /tmp/mytest/repo3_branch3/.git`"
+          if test "`cat /tmp/mytest/repo3_branch3/.git`" != "gitdir: /tmp/mytest/repo3/.git/worktrees/repo3_branch3"; then
+            echo "failed asserting git file"
+            exit 219
+          fi
+          echo "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch3/gitdir`"
+          if test "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch3/gitdir`" != "/tmp/mytest/repo3_branch3/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 220
+          fi
+          git status
+          git worktree list
+
+          echo "test case 3.4.error: called from broken worktree - worktree point to non-existent repository"
+          cd /tmp/mytest/repo3_branch4
+          error_code="empty"
+          git-worktree-relative || error_code=$?
+          if test "$error_code" == "empty"; then
+            echo "error: not returning non-zero error code when ran from non-worktree"
+            exit 221
+          fi
+          error_code="empty"
+          git-worktree-absolute || error_code=$?
+          if test "$error_code" == "empty"; then
+            echo "error: not returning non-zero error code when ran from non-worktree"
+            exit 222
+          fi
+
+          echo "test case 3.4.work: called from broken worktree - worktree point to non-existent repository, should work because -r flag set"
+          cd /tmp/mytest/repo3_branch4
+          git-worktree-relative -r ../repo3/.git/worktrees/repo3_branch4
+          echo "`cat /tmp/mytest/repo3_branch4/.git`"
+          if test "`cat /tmp/mytest/repo3_branch4/.git`" != "gitdir: ../repo3/.git/worktrees/repo3_branch4"; then
+            echo "failed asserting git file"
+            exit 223
+          fi
+          echo "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch4/gitdir`"
+          if test "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch4/gitdir`" != "../repo3_branch4/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 224
+          fi
+          git status
+          git worktree list
+          git-worktree-absolute -r ../repo3/.git/worktrees/repo3_branch4
+          echo "`cat /tmp/mytest/repo3_branch4/.git`"
+          if test "`cat /tmp/mytest/repo3_branch4/.git`" != "gitdir: /tmp/mytest/repo3/.git/worktrees/repo3_branch4"; then
+            echo "failed asserting git file"
+            exit 225
+          fi
+          echo "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch4/gitdir`"
+          if test "`cat /tmp/mytest/repo3/.git/worktrees/repo3_branch4/gitdir`" != "/tmp/mytest/repo3_branch4/.git"; then
+            echo "failed asserting git worktrees gitdir file"
+            exit 226
+          fi
+          git status
+          git worktree list
+
