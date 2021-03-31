@@ -13,7 +13,7 @@ while getopts "hw:r:vd" opt; do
     case "$opt" in
     h)
       cat << EOF
-usage: [-w worktree_target] [-r repository_target] [-v]
+usage: [-w worktree_target] [-r repository_target] [-v] [-d]
   -w worktree_target = directory of worktree to be made absolute (will default to current directory if not supplied)
   -r repository_target = directory of repository (including worktree directory inside .git, will be read from {worktree_target}/.git file if not supplied)
   -v = verbose
@@ -67,7 +67,7 @@ done
 verbose_output()
 {
     if test $verbose -eq 1; then
-        { printf '%s ' "$@"; echo; } 1>&2
+        { printf '>>> %s ' "$@"; echo; } 1>&2
     fi
 }
 

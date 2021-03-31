@@ -79,6 +79,9 @@ sudo bash install.sh
 - installation for one user:
   - copy it to any directory that is added to your PATH variable
 
+#### Uninstallation
+
+- just remove copied files (or just use uninstall.sh script: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; sudo bash git-worktree-relative/uninstall.sh```)
 
 ## Contributing
 

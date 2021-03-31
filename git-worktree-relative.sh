@@ -67,7 +67,7 @@ done
 verbose_output()
 {
     if test $verbose -eq 1; then
-        { printf '%s ' "$@"; echo; } 1>&2
+        { printf '>>> %s ' "$@"; echo; } 1>&2
     fi
 }
 
