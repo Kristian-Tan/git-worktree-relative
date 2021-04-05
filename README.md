@@ -65,6 +65,7 @@ cd git-worktree-relative
 sudo bash install.sh
 ```
 - or this one-line: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; cd git-worktree-relative ; sudo bash install.sh```
+- or another one-line: ```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kristian-Tan/git-worktree-relative/HEAD/get)"```
 
 #### Manual Installation
 

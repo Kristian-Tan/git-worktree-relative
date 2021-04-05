@@ -19,9 +19,22 @@ jobs:
         run: |
           initial_directory_path="`pwd`"
           cd "$initial_directory_path"
+
+
+
+          echo "installing with one-line curl"
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kristian-Tan/git-worktree-relative/HEAD/get)"
+          git-worktree-relative -h
+          git-worktree-absolute -h
+
+          cd "$initial_directory_path"
+          echo "uninstalling from /bin (default location if not set)"
+          sudo sh uninstall.sh
+
           echo "installing to /bin (default location if not set)"
           echo "after installation, scripts will be called directly (not with ./filename but filename)"
           sudo sh install.sh
+
 
           echo "setup case 1: from absolute to relative (then back to absolute), no argument, run from good repo, good worktree"
           mkdir /tmp/mytest
@@ -47,6 +60,7 @@ jobs:
             exit 202
           fi
 
+
           echo "test case 1-relative"
           cd /tmp/mytest/repo1_branch1
           git-worktree-relative
@@ -66,6 +80,7 @@ jobs:
           cd /tmp/mytest/repo1_branch1
           git status
           git worktree list
+
 
           echo "test case 1-absolute"
           cd /tmp/mytest/repo1_branch1
@@ -87,6 +102,7 @@ jobs:
           git status
           git worktree list
 
+
           echo "test case 2: called from non-worktree"
           mkdir /tmp/mytest/not-a-repository
           cd /tmp/mytest/not-a-repository
@@ -102,6 +118,7 @@ jobs:
             echo "error: not returning non-zero error code when ran from non-worktree"
             exit 208
           fi
+
 
           echo "setup case 3: called from worktree that have broken link"
           mkdir /tmp/mytest/repo3
@@ -122,6 +139,7 @@ jobs:
           echo "gitdir: /tmp/some/rubbish/path" > "../repo3_branch4/.git"
           echo "/tmp/some/rubbish/path" > ".git/worktrees/repo3_branch4/gitdir"
 
+
           echo "test case 3.2.error: called from broken worktree - worktree point to non-existent repository"
           cd /tmp/mytest/repo3_branch2
           error_code="empty"
@@ -136,6 +154,7 @@ jobs:
             echo "error: not returning non-zero error code when ran from non-worktree"
             exit 210
           fi
+
 
           echo "test case 3.2.work: called from broken worktree - worktree point to non-existent repository, should work because -r flag set"
           cd /tmp/mytest/repo3_branch2
@@ -166,6 +185,7 @@ jobs:
           git status
           git worktree list
 
+
           #echo "test case 3.3.error: called from broken worktree - worktree point to non-existent repository, this one should work instead of failing because repo3_branch3 have worktree that points to valid repository"
           #cd /tmp/mytest/repo3_branch3
           #error_code="empty"
@@ -180,6 +200,7 @@ jobs:
           #  echo "error: not returning non-zero error code when ran from non-worktree"
           #  exit 216
           #fi
+
 
           echo "test case 3.3.work: called from broken worktree - worktree point to non-existent repository, should work because -r flag set"
           cd /tmp/mytest/repo3_branch3
@@ -210,6 +231,7 @@ jobs:
           git status
           git worktree list
 
+
           echo "test case 3.4.error: called from broken worktree - worktree point to non-existent repository"
           cd /tmp/mytest/repo3_branch4
           error_code="empty"
@@ -224,6 +246,7 @@ jobs:
             echo "error: not returning non-zero error code when ran from non-worktree"
             exit 222
           fi
+
 
           echo "test case 3.4.work: called from broken worktree - worktree point to non-existent repository, should work because -r flag set"
           cd /tmp/mytest/repo3_branch4
@@ -253,6 +276,7 @@ jobs:
           fi
           git status
           git worktree list
+
 
           cd "$initial_directory_path"
           echo "uninstalling from /bin (default location if not set)"

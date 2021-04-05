@@ -1,0 +1,4 @@
+git clone https://github.com/Kristian-Tan/git-worktree-relative.git
+cd git-worktree-relative
+sudo bash install.sh
+rm -rf ../git-worktree-relative
