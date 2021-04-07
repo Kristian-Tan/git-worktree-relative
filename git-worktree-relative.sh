@@ -2,6 +2,16 @@
 
 OPTIND=1 # Reset in case getopts has been used previously in the shell.
 
+# boilerplate
+set -o errexit # exit when any command return non-zero exit code
+set -o nounset # exit when using undeclared variables
+exit_on_error() {
+    if test $# -eq 1; then
+        echo ">>> $1"
+    fi
+    exit 1
+}
+
 # default argument value
 worktree_target=""
 repository_target=""
