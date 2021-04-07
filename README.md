@@ -87,6 +87,7 @@ sudo bash install.sh
 #### Uninstallation
 
 - just remove copied files (or just use uninstall.sh script: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; sudo bash git-worktree-relative/uninstall.sh```)
+- or another one-line: ```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kristian-Tan/git-worktree-relative/HEAD/remove)"```
 
 ## Contributing
 
