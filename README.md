@@ -4,8 +4,8 @@
 ## Background
 
 - Feature request from 2016 but not implemented yet (as in 2021-03-01) https://public-inbox.org/git/CACsJy8AZVWNQNgsw21EF2UOk42oFeyHSRntw_rpeZz_OT1xdMw@mail.gmail.com/T/
-- There are other solution which use go, but not everyone want to install go and compile their own tools (or maybe just cannot be bothered to) https://github.com/harobed/fix-git-worktree
-- Even if this feature is not really popular https://stackoverflow.com/questions/66635437/git-worktree-with-relative-path only have 50-70 views (as in 2021-03-31)
+- There are other solution which use go, but not everyone want to install go and compile their own tools (or maybe just cannot be bothered to) https://github.com/harobed/fix-git-worktree (update: alternative bash solution exist in https://gitlab.com/kstr0k/git-worktree-path)
+- Even if this feature is not really popular https://stackoverflow.com/questions/66635437/git-worktree-with-relative-path only have 200 views in 4 month since asked (as in 2021-08-01)
 
 
 ## My solution
@@ -39,19 +39,19 @@
   - repository in `/home/myuser/repo/myproject` ; worktree in `/home/myuser/www/myproject` ; worktree is connected with repository (link is not broken)
     ```bash
     cd /home/myuser/www/myproject
-    git-worktree-relative
+    git worktree-relative
     # OR
-    git-worktree-relative -w /home/myuser/www/myproject
+    git worktree-relative -w /home/myuser/www/myproject
     ```
   - repository in `/home/myuser/repo/myproject` ; worktree in `/home/myuser/www/myproject` ; worktree is NOT connected with repository (link broken)
     ```bash
     cd /home/myuser/www/myproject
-    git-worktree-relative -r /home/myuser/repo/myproject/.git/worktrees/myproject
+    git worktree-relative -r /home/myuser/repo/myproject/.git/worktrees/myproject
     # OR
-    git-worktree-relative -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject
+    git worktree-relative -w /home/myuser/www/myproject -r /home/myuser/repo/myproject/.git/worktrees/myproject
     ```
   - to detect if link is broken, run command 'git status' in worktree directory
-- Reversing relative worktree back to absolute: just change `git-worktree-relative` command with `git-worktree-absolute` (same command line argument)
+- Reversing relative worktree back to absolute: just change `git worktree-relative` command with `git worktree-absolute` (same command line argument)
   - command `git worktree remove` requires the path to be absolute: you can use this reverse script to revert it back to absolute path before removing
 
 ## Installation
