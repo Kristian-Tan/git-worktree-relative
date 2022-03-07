@@ -123,13 +123,13 @@ repository_target="${worktree_link_content%%$string_slash_dot_git_slash*}"
 
 verbose_output
 verbose_output 'reverse string for worktree_link_content'
-verbose_output "  \$ worktree_link_content_reversed=\`echo \"$worktree_link_content\" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'\`"
-worktree_link_content_reversed=`echo "$worktree_link_content" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'`
+verbose_output "  \$ worktree_link_content_reversed=\`echo \"$worktree_link_content\" | rev\`"
+worktree_link_content_reversed=`echo "$worktree_link_content" | rev`
 
 verbose_output
 verbose_output 'reverse string for string_slash_dot_git_slash'
-verbose_output "  \$ string_slash_dot_git_slash_reversed=\`echo \"$string_slash_dot_git_slash\" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'\`"
-string_slash_dot_git_slash_reversed=`echo "$string_slash_dot_git_slash" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'`
+verbose_output "  \$ string_slash_dot_git_slash_reversed=\`echo \"$string_slash_dot_git_slash\" | rev\`"
+string_slash_dot_git_slash_reversed=`echo "$string_slash_dot_git_slash" | rev`
 
 verbose_output
 verbose_output 'remove all string after (reversed)'
@@ -138,8 +138,8 @@ worktree_name_inside_repository_reversed="${worktree_link_content_reversed%%$str
 
 verbose_output
 verbose_output 'reverse back: should contain "worktrees/myrepo_worktree1"'
-verbose_output "  \$ worktree_name_inside_repository=\`echo \"$worktree_name_inside_repository_reversed\" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'\`"
-worktree_name_inside_repository=`echo "$worktree_name_inside_repository_reversed" | sed 's/./&\n/g' | tac | sed -e :a -e 'N;s/\n//g;ta'`
+verbose_output "  \$ worktree_name_inside_repository=\`echo \"$worktree_name_inside_repository_reversed\" | rev\`"
+worktree_name_inside_repository=`echo "$worktree_name_inside_repository_reversed" | rev`
 
 verbose_output
 verbose_output 'get absolute path of repository'
