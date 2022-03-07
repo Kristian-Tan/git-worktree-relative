@@ -16,7 +16,7 @@
   - `cat`
   - `echo`
   - `readlink`
-  - `realpath` (GNU utility since 2012, might not be preinstalled in very old linux system like debian wheezy)
+  - `tac` and `realpath` (GNU utility / `coreutils` since 2012, might not be preinstalled in very old linux system like debian wheezy or macOS)
   - `sed`
   - `pwd`
   - bash shell parameter expansion `${parameter/pattern/string}` and `${parameter%%word}` https://www.gnu.org/software/bash/manual/bash.html#Shell-Parameter-Expansion
@@ -88,6 +88,17 @@ sudo bash install.sh
 
 - just remove copied files (or just use uninstall.sh script: ```git clone https://github.com/Kristian-Tan/git-worktree-relative.git ; sudo bash git-worktree-relative/uninstall.sh```)
 - or another one-line: ```/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Kristian-Tan/git-worktree-relative/HEAD/remove)"```
+
+##### Installation on macOS
+
+- installation on macOS might encounter problem such as `tac: command not found` or `readlink: illegal option -- f`
+- the cause is because macOS does not have `tac` and have their own implementation of `readlink`
+- easiest workaround is by installing gnu coreutils with homebrew:
+  ```bash
+    brew install coreutils
+    ln -s /usr/local/bin/greadlink /usr/local/bin/readlink
+  ```
+- after that, you can continue installation and usage as normal
 
 ## Contributing
 
